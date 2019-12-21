@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   |
+   | Default: ${user.home}/.m2/repository
+  <localRepository>/path/to/local/repo</localRepository>
+  -->
+  
+  <pluginGroups></pluginGroups>
+  
+  <proxies>
+	  <!-- <proxy>
+	        <id>dev</id>
+	        <active>true</active>
+	        <protocol>http</protocol>
+	        <username></username>
+	        <password></password>
+	        <host>dev-proxy.oa.com</host>
+	        <port>8080</port>
+	        <nonProxyHosts></nonProxyHosts>
+	      </proxy> -->
+  </proxies>
+  
+  <servers></servers>
+ 
+  <mirrors></mirrors>
+
+ 
+  <profiles>
+      <profile>
+        <id>nexus</id>
+        <repositories>
+            <repository>
+                <id>central</id>
+                <url>http://repo1.maven.org/maven2</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>central</id>
+                <url>http://repo1.maven.org/maven2</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </pluginRepository>
+        </pluginRepositories>
+    </profile>
+    <profile>
+        <id>qcloud-repo</id>
+        <repositories>
+            <repository>
+                <id>qcloud-central</id>
+                <name>qcloud mirror central</name>
+                <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+            </repository>
+            </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>qcloud-plugin-central</id>
+                <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+            </pluginRepository>
+        </pluginRepositories>
+    </profile>
+  </profiles>
+  
+  <activeProfiles>
+    <activeProfile>nexus</activeProfile>
+    <activeProfile>qcloud-repo</activeProfile>
+ </activeProfiles>
+
+</settings>
