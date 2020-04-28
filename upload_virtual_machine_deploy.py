@@ -96,17 +96,17 @@ def getPkgInfo(application_id, pkg_version):
     params = dict(ApplicationId=application_id, SearchWord=pkg_version)
     headers = getHeader(params, "DescribePkgs", "POST")
     r = requests.post(endpoint, headers=headers, data=json.dumps(params))
-    print r.content
+    print(r.content)
     return json.loads(r.content)['Response']['Result']
 
-def getUploadInfo(application_id, pkg_name, pkg_version, pkg_type, pkgDesc="" ):
+def describeUploadInfo(application_id, pkg_name, pkg_version, pkg_type, pkgDesc="" ):
     params = dict(ApplicationId=application_id, PkgName=pkg_name, PkgVersion=pkg_version, PkgDesc=pkgDesc, PkgType=pkg_type)
-    headers = getHeader(params, "GetUploadInfo", "POST")
+    headers = getHeader(params, "DescribeUploadInfo", "POST")
     r = requests.post(endpoint, headers = headers, data=json.dumps(params))
-    # print "-----------------"
-    # print r.status_code
-    # print r.content
-    # print "-----------------"
+    print("-----------------")
+    print(r.status_code)
+    print(r.content)
+    print("-----------------")
     cosUploadInfo = json.loads(r.content)['Response']['Result']
     return cosUploadInfo
     
@@ -119,7 +119,7 @@ def uploadFile(path, uploadInfo, application_id, app_Id, pkg_version):
     config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key, Token=token, Scheme=scheme)
     # 2. 获取客户端对象
     client = CosS3Client(config)
- 
+
     file_name = os.path.basename(path)
     key = app_Id+"/"+application_id+"/"+pkg_version+"/"+file_name 
     response = client.upload_file(
@@ -136,10 +136,11 @@ def uploadFile(path, uploadInfo, application_id, app_Id, pkg_version):
     if md5 == '':
         result = 1
     params = dict(ApplicationId=application_id, Md5=md5, PkgId=uploadInfo['PkgId'], Result=0, Size=size)
-    headers = getHeader(params, "UpdateUploadInfo", "POST")
+    headers = getHeader(params, "ModifyUploadInfo", "POST")
     r = requests.post(endpoint, headers = headers, data=json.dumps(params))
-    print r.status_code
-    print r.content
+    print(json.dumps(params))
+    print(r.status_code)
+    print(r.content)
 
 def getMd5(file_path):
     f = open(file_path,'rb')
@@ -154,8 +155,8 @@ def deployGroup(group_id, pkg_id, startup_params):
     params = dict(GroupId=group_id, PkgId=pkg_id, StartupParameters=startup_params)
     headers = getHeader(params, "DeployGroup", "POST")
     r = requests.post(endpoint, headers = headers, data=json.dumps(params))
-    print r.status_code
-    print r.content
+    print(r.status_code)
+    print(r.content)
         
 if __name__ == "__main__":
     path = sys.argv[1]                      # 本地文件路径
@@ -169,12 +170,12 @@ if __name__ == "__main__":
     
     pkgInfo = getPkgInfo(applicationId, pkg_version)
     if pkgInfo['TotalCount'] > 0:
-        print "[INFO] {} has uploaded version {}, no need upload".format(applicationId, pkg_version)
+        print("[INFO] {} has uploaded version {}, no need upload".format(applicationId, pkg_version))
         pkgId = pkgInfo['Content'][0]['PkgId']
     else:
-        print "[INFO] {} not uploaded version {}, upload now".format(applicationId, pkg_version)
-        uploadInfo = getUploadInfo(applicationId, pkg_name, pkg_version, pkg_type)  
-        uploadFile(path, uploadInfo, applicationId, appId, pkg_version) 
+        print("[INFO] {} not uploaded version {}, upload now".format(applicationId, pkg_version))
+        uploadInfo = describeUploadInfo(applicationId, pkg_name, pkg_version, pkg_type)
+        uploadFile(path, uploadInfo, applicationId, appId, pkg_version)
         pkgId = uploadInfo['PkgId']
 
     deployGroup(group_id, pkgId, startup_params)
